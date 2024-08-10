@@ -17,7 +17,7 @@ Lab repository for OS Fall 2023 at Fudan University
 
 Reference:
 
-- [去年的实验](https://github.com/idlebo/OS-23Fall-FDU/)
+- [去年的实验](https://github.com/FDUCSLG/OS-23Fall-FDU/)
 
 - [Arm® Architecture Reference Manual](https://cs140e.sergio.bz/docs/ARMv8-Reference-Manual.pdf)
 - [Arm® Instruction Set Reference Guide](https://ipads.se.sjtu.edu.cn/courses/os/reference/arm_isa.pdf)
