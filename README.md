@@ -1,5 +1,5 @@
 # OS-24Fall-FDU
-Lab repository for OS Fall 2023 at Fudan University
+Lab repository for OS Fall 2024 at Fudan University
 
 这是复旦大学 2024 年秋季学期《操作系统（H）》课程的配套实验内容。我们将建立一个基于 ARM 架构的简易教学操作系统。
 
