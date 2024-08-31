@@ -58,5 +58,17 @@ _start:
   mov sp, x2
   ldr x9, =main
   br  x9
-  
 
+.section ".data"
+.align 12
+.global kstack
+kstack:
+  .zero 4096 
+  .zero 4096 
+  .zero 4096 
+  .zero 4096
+  /**
+   * Allocate a guard page to protect the kernel stack from potential overflow
+   * or corruption. 
+   */
+  .zero 4096

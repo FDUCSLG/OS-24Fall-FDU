@@ -4,7 +4,7 @@
 #include <driver/uart.h>
 #include <kernel/init.h>
 
-define_early_init(uart)
+void uart_init()
 {
 	device_put_u32(UART_CR, 0);
 	// new_irq(UART_IRQ, uartintr);

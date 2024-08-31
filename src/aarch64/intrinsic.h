@@ -2,6 +2,7 @@
 
 #include <common/defines.h>
 
+#define SECONDARY_CORE_ENTRY 0x40000000
 #define PSCI_SYSTEM_OFF 0x84000008
 #define PSCI_SYSTEM_RESET 0x84000009
 #define PSCI_SYSTEM_CPUON 0xc4000003
@@ -39,6 +40,11 @@ static ALWAYS_INLINE u64 psci_fn(u64 id, u64 arg1, u64 arg2, u64 arg3)
 		     : "x0", "x1", "x2", "x3");
 
 	return result;
+}
+
+static ALWAYS_INLINE u64 psci_cpu_on(u64 cpuid, u64 ep)
+{
+	return psci_fn(PSCI_SYSTEM_CPUON, cpuid, ep, 0);
 }
 
 static ALWAYS_INLINE usize cpuid()
@@ -292,4 +298,5 @@ static ALWAYS_INLINE NO_RETURN void arch_stop_cpu()
 	 compiler_fence())
 
 void delay_us(u64 n);
-int psci_cpu_on(u64 cpuid, u64 ep);
+u64 psci_cpu_on(u64 cpuid, u64 ep);
+void smp_init();

@@ -11,7 +11,9 @@ void delay_us(u64 n)
 	} while (now <= end);
 }
 
-int psci_cpu_on(u64 cpuid, u64 ep)
+void smp_init()
 {
-	return psci_fn(PSCI_SYSTEM_CPUON, cpuid, ep, 0);
+	psci_cpu_on(1, SECONDARY_CORE_ENTRY);
+	psci_cpu_on(2, SECONDARY_CORE_ENTRY);
+	psci_cpu_on(3, SECONDARY_CORE_ENTRY);
 }

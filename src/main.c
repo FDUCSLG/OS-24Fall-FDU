@@ -1,36 +1,50 @@
-#include "driver/uart.h"
-#include "kernel/init.h"
-#include "kernel/printk.h"
 #include <aarch64/intrinsic.h>
-#include <common/string.h>
-#include <kernel/init.h>
-#include <driver/memlayout.h>
-#include <aarch64/mmu.h>
+#include <driver/uart.h>
+#include <kernel/printk.h>
+#include <kernel/core.h>
 
-__attribute__((aligned(16))) char kstack[4096 * 4];
-
-static bool boot_secondary_cpus = false;
-
-NO_RETURN void idle_entry();
-
-void kernel_init()
-{
-	do_early_init();
-	do_init();
-	boot_secondary_cpus = true;
-}
+static volatile bool boot_secondary_cpus = false;
 
 void main()
 {
-	for (int i = 1; i < 4; i++)
-		psci_cpu_on(i, 0x40000000);
+	/**
+	 * LAB 1 TASK 1
+	 * 
+	 * Print "Hello, world!" on all four cores. The following questions may help:
+	 * (1) How to print strings.
+	 * (2) Where to place the print statements.
+	 */
 
 	if (cpuid() == 0) {
-		kernel_init();
+		/**
+		 * Core 0 is responsible for initializing the kernel.
+		 * 
+		 * The `smp_init` function wakes up the other three cores, which will
+		 * subsequently enter the `main` function and take the `else` branch below.
+		 * 
+		 * For Lab 1, carefully consider the execution path for core 0 and the other
+		 * three cores.
+		 */
+		smp_init();
+
+		/**
+		 * Initialize the UART.
+		 * 
+		 * After initialization, the `uart_put_char` function can be used to print
+		 * characters to the screen.
+		 */
+		uart_init();
+
+		/**
+		 * Initialize printk, which is analogous to printf.
+		 */
+		printk_init();
+
+		// Set a flag indicating that the secondary CPUs can start executing.
+		boot_secondary_cpus = true;
 	} else {
 		while (!boot_secondary_cpus)
 			;
-		arch_dsb_sy();
 	}
 
 	set_return_addr(idle_entry);
