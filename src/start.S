@@ -26,10 +26,10 @@
 
 .global _start
 _start:
-	/**
-	 * Set up the user and kernel page tables.
-	 * Higher and lower half map to same physical memory region.
-	 */
+  /**
+   * Set up the user and kernel page tables.
+   * Higher and lower half map to same physical memory region.
+   */
   adrp x0, kernel_pt_level0
   msr ttbr0_el1, x0
   adrp x0, kernel_pt_level0
@@ -41,12 +41,12 @@ _start:
   ldr x9, =MAIR_VALUE
   msr mair_el1, x9
 
-	/* Enable MMU. */
+  /* Enable MMU. */
   mrs x0, sctlr_el1
   orr x0, x0, #1
   msr sctlr_el1, x0
 
-	/* Set up kernel stacks. */
+  /* Set up kernel stacks. */
   mrs x0, mpidr_el1
   and x0, x0, #0xff
   add x0, x0, 1
