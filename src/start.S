@@ -1,5 +1,7 @@
 #define PAGE_SIZE 4096
 
+#define SCTLR_MMU_ENABLED (1 << 0)
+
 /* Translation Control Register */
 #define TCR_T0SZ        (64 - 48)
 #define TCR_T1SZ        ((64 - 48) << 16)
@@ -30,10 +32,9 @@ _start:
    * Set up the user and kernel page tables.
    * Higher and lower half map to same physical memory region.
    */
-  adrp x0, kernel_pt_level0
-  msr ttbr0_el1, x0
-  adrp x0, kernel_pt_level0
-  msr ttbr1_el1, x0
+  adrp x9, kernel_pt_level0
+  msr ttbr0_el1, x9
+  msr ttbr1_el1, x9
 
   ldr x9, =TCR_VALUE
   msr tcr_el1, x9
@@ -42,9 +43,9 @@ _start:
   msr mair_el1, x9
 
   /* Enable MMU. */
-  mrs x0, sctlr_el1
-  orr x0, x0, #1
-  msr sctlr_el1, x0
+  mrs x9, sctlr_el1
+  orr x9, x9, #SCTLR_MMU_ENABLED
+  msr sctlr_el1, x9
 
   /* Set up kernel stacks. */
   mrs x0, mpidr_el1
@@ -55,6 +56,7 @@ _start:
   ldr x2, =kstack
   add x2, x2, x0
   mov sp, x2
-
-  b main
+  ldr x9, =main
+  br  x9
+  
 
