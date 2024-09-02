@@ -2,7 +2,6 @@
 #include <driver/aux.h>
 #include <driver/gpio.h>
 #include <driver/uart.h>
-#include <kernel/init.h>
 
 void uart_init()
 {

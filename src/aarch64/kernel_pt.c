@@ -121,7 +121,7 @@ __attribute__((__aligned__(PAGE_SIZE))) PTEntries _kernel_pt_lv2_dev = {
 /**
  * Bits used to index: 29:21
  * Size per entry: 2MB
- * Address Span: [0x40000000 (1GB), 0x400000000 (2GB)]
+ * Address Span: [0x40000000 (1GB), 0x80000000 (2GB)]
  */
 __attribute__((__aligned__(PAGE_SIZE))) PTEntries _kernel_pt_lv2_ram = {
 	0x40000000 | PTE_KERNEL_DATA, 0x40200000 | PTE_KERNEL_DATA,

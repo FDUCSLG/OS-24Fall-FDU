@@ -1,6 +1,5 @@
 #include <common/format.h>
 #include <common/spinlock.h>
-#include <kernel/init.h>
 #include <kernel/printk.h>
 
 static SpinLock printk_lock;

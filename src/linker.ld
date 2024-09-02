@@ -36,7 +36,4 @@ SECTIONS
       *(.bss .bss.*) 
     }
     PROVIDE(end = .);
-    /DISCARD/ : {
-      *(.comment)
-    }
 }

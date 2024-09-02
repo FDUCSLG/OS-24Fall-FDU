@@ -5,7 +5,7 @@
 #define SECONDARY_CORE_ENTRY 0x40000000
 #define PSCI_SYSTEM_OFF 0x84000008
 #define PSCI_SYSTEM_RESET 0x84000009
-#define PSCI_SYSTEM_CPUON 0xc4000003
+#define PSCI_SYSTEM_CPUON 0xC4000003
 
 /**
  * PSCI (Power State Coordination Interface) function on QEMU's virt platform
