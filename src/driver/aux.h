@@ -19,4 +19,4 @@
 
 #define AUX_UART_CLOCK 250000000
 
-#define AUX_MU_BAUD(baudrate) ((AUX_UART_CLOCK / ((baudrate)*8)) - 1)
+#define AUX_MU_BAUD(baudrate) ((AUX_UART_CLOCK / ((baudrate) * 8)) - 1)

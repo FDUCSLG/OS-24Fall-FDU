@@ -4,7 +4,7 @@
 #define MMIO_BASE (KERNEL_BASE + 0xA000000)
 #define LOCAL_BASE (KERNEL_BASE + 0x40000000)
 
-#define V2P(v) ((u64)(v)-VA_START)
+#define V2P(v) ((u64)(v) - VA_START)
 #define P2V(p) ((u64)(p) + VA_START)
 
 #define VA_START 0xFFFF000000000000

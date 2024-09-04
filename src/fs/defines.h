@@ -38,40 +38,40 @@ typedef u16 InodeType;
 // `mkfs` generates the super block and builds an initial filesystem. The
 // super block describes the disk layout.
 typedef struct {
-	u32 num_blocks; // total number of blocks in filesystem.
-	u32 num_data_blocks;
-	u32 num_inodes;
-	u32 num_log_blocks; // number of blocks for logging, including log header.
-	u32 log_start; // the first block of logging area.
-	u32 inode_start; // the first block of inode area.
-	u32 bitmap_start; // the first block of bitmap area.
+    u32 num_blocks; // total number of blocks in filesystem.
+    u32 num_data_blocks;
+    u32 num_inodes;
+    u32 num_log_blocks; // number of blocks for logging, including log header.
+    u32 log_start; // the first block of logging area.
+    u32 inode_start; // the first block of inode area.
+    u32 bitmap_start; // the first block of bitmap area.
 } SuperBlock;
 
 // `type == INODE_INVALID` implies this inode is free.
 typedef struct dinode {
-	InodeType type;
-	u16 major; // major device id, for INODE_DEVICE only.
-	u16 minor; // minor device id, for INODE_DEVICE only.
-	u16 num_links; // number of hard links to this inode in the filesystem.
-	u32 num_bytes; // number of bytes in the file, i.e. the size of file.
-	u32 addrs[INODE_NUM_DIRECT]; // direct addresses/block numbers.
-	u32 indirect; // the indirect address block.
+    InodeType type;
+    u16 major; // major device id, for INODE_DEVICE only.
+    u16 minor; // minor device id, for INODE_DEVICE only.
+    u16 num_links; // number of hard links to this inode in the filesystem.
+    u32 num_bytes; // number of bytes in the file, i.e. the size of file.
+    u32 addrs[INODE_NUM_DIRECT]; // direct addresses/block numbers.
+    u32 indirect; // the indirect address block.
 } InodeEntry;
 
 // the block pointed by `InodeEntry.indirect`.
 typedef struct {
-	u32 addrs[INODE_NUM_INDIRECT];
+    u32 addrs[INODE_NUM_INDIRECT];
 } IndirectBlock;
 
 // directory entry. `inode_no == 0` implies this entry is free.
 typedef struct dirent {
-	u16 inode_no;
-	char name[FILE_NAME_MAX_LENGTH];
+    u16 inode_no;
+    char name[FILE_NAME_MAX_LENGTH];
 } DirEntry;
 
 typedef struct {
-	usize num_blocks;
-	usize block_no[LOG_MAX_SIZE];
+    usize num_blocks;
+    usize block_no[LOG_MAX_SIZE];
 } LogHeader;
 
 // mkfs only

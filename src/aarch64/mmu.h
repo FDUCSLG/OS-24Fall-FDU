@@ -10,7 +10,7 @@ typedef unsigned long long u64;
 #define MT_NORMAL_NC 0x2
 #define MT_DEVICE_nGnRnE_FLAGS 0x00
 #define MT_NORMAL_FLAGS \
-	0xFF /* Inner/Outer Write-Back Non-Transient RW-Allocate */
+    0xFF /* Inner/Outer Write-Back Non-Transient RW-Allocate */
 #define MT_NORMAL_NC_FLAGS 0x44 /* Inner/Outer Non-Cacheable */
 
 #define SH_OUTER (2 << 8)
@@ -59,8 +59,8 @@ typedef u64 PTEntry;
 typedef PTEntry PTEntries[N_PTE_PER_TABLE];
 typedef PTEntry *PTEntriesPtr;
 
-#define VA_OFFSET(va) ((u64)(va)&0xFFF)
+#define VA_OFFSET(va) ((u64)(va) & 0xFFF)
 #define PTE_ADDRESS(pte) ((pte) & ~0xFFFF000000000FFF)
-#define PTE_FLAGS(pte) ((pte)&0xFFFF000000000FFF)
+#define PTE_FLAGS(pte) ((pte) & 0xFFFF000000000FFF)
 #define P2N(addr) (addr >> 12)
 #define PAGE_BASE(addr) ((u64)addr & ~(PAGE_SIZE - 1))

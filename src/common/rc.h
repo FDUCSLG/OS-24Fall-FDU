@@ -3,7 +3,7 @@
 #include <common/defines.h>
 
 typedef struct {
-	isize count;
+    isize count;
 } RefCount;
 
 void init_rc(RefCount *);

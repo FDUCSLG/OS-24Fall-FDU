@@ -4,7 +4,7 @@
 #include <aarch64/intrinsic.h>
 
 typedef struct {
-	volatile bool locked;
+    volatile bool locked;
 } SpinLock;
 
 void init_spinlock(SpinLock *);

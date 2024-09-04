@@ -12,18 +12,18 @@ typedef uint32_t uint;
 
 // this file should be compiled with normal gcc...
 
-#define stat  xv6_stat  // avoid clash with host struct stat
+#define stat xv6_stat // avoid clash with host struct stat
 #define sleep xv6_sleep
 // #include "../../../inc/fs.h"
 #include "../../fs/defines.h"
 // #include "../../fs/inode.h"
 
 #ifndef static_assert
-#define static_assert(a, b)                                                                        \
-    do {                                                                                           \
-        switch (0)                                                                                 \
-        case 0:                                                                                    \
-        case (a):;                                                                                 \
+#define static_assert(a, b) \
+    do {                    \
+        switch (0)          \
+        case 0:             \
+        case (a):;          \
     } while (0)
 #endif
 
@@ -31,19 +31,19 @@ typedef uint32_t uint;
 
 // Disk layout:
 // [ boot block | sb block | log | inode blocks | free bit map | data blocks ]
-#define BSIZE         BLOCK_SIZE
-#define LOGSIZE       LOG_MAX_SIZE
-#define NDIRECT       INODE_NUM_DIRECT
-#define NINDIRECT     INODE_NUM_INDIRECT
-#define DIRSIZ        FILE_NAME_MAX_LENGTH
-#define IPB           (BSIZE / sizeof(InodeEntry))
+#define BSIZE BLOCK_SIZE
+#define LOGSIZE LOG_MAX_SIZE
+#define NDIRECT INODE_NUM_DIRECT
+#define NINDIRECT INODE_NUM_INDIRECT
+#define DIRSIZ FILE_NAME_MAX_LENGTH
+#define IPB (BSIZE / sizeof(InodeEntry))
 #define IBLOCK(i, sb) ((i) / IPB + sb.inode_start)
 
 int nbitmap = FSSIZE / (BSIZE * 8) + 1;
 int ninodeblocks = NINODES / IPB + 1;
 int num_log_blocks = LOGSIZE;
-int nmeta;            // Number of meta blocks (boot, sb, num_log_blocks, inode, bitmap)
-int num_data_blocks;  // Number of data blocks
+int nmeta; // Number of meta blocks (boot, sb, num_log_blocks, inode, bitmap)
+int num_data_blocks; // Number of data blocks
 
 int fsfd;
 SuperBlock sb;
@@ -60,7 +60,8 @@ uint ialloc(ushort type);
 void iappend(uint inum, void *p, int n);
 
 // convert to little-endian byte order
-ushort xshort(ushort x) {
+ushort xshort(ushort x)
+{
     ushort y;
     uchar *a = (uchar *)&y;
     a[0] = x;
@@ -68,7 +69,8 @@ ushort xshort(ushort x) {
     return y;
 }
 
-uint xint(uint x) {
+uint xint(uint x)
+{
     uint y;
     uchar *a = (uchar *)&y;
     a[0] = x;
@@ -78,7 +80,8 @@ uint xint(uint x) {
     return y;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int i, cc, fd;
     uint rootino, inum, off;
     struct dirent de;
@@ -115,14 +118,10 @@ int main(int argc, char *argv[]) {
 
     printf("nmeta %d (boot, super, log blocks %u inode blocks %u, bitmap blocks %u) blocks %d "
            "total %d\n",
-           nmeta,
-           num_log_blocks,
-           ninodeblocks,
-           nbitmap,
-           num_data_blocks,
+           nmeta, num_log_blocks, ninodeblocks, nbitmap, num_data_blocks,
            FSSIZE);
 
-    freeblock = nmeta;  // the first free block that we can allocate
+    freeblock = nmeta; // the first free block that we can allocate
 
     for (i = 0; i < FSSIZE; i++)
         wsect(i, zeroes);
@@ -194,7 +193,8 @@ int main(int argc, char *argv[]) {
     exit(0);
 }
 
-void wsect(uint sec, void *buf) {
+void wsect(uint sec, void *buf)
+{
     if (lseek(fsfd, sec * BSIZE, 0) != sec * BSIZE) {
         perror("lseek");
         exit(1);
@@ -205,7 +205,8 @@ void wsect(uint sec, void *buf) {
     }
 }
 
-void winode(uint inum, struct dinode *ip) {
+void winode(uint inum, struct dinode *ip)
+{
     char buf[BSIZE];
     uint bn;
     struct dinode *dip;
@@ -217,7 +218,8 @@ void winode(uint inum, struct dinode *ip) {
     wsect(bn, buf);
 }
 
-void rinode(uint inum, struct dinode *ip) {
+void rinode(uint inum, struct dinode *ip)
+{
     char buf[BSIZE];
     uint bn;
     struct dinode *dip;
@@ -228,7 +230,8 @@ void rinode(uint inum, struct dinode *ip) {
     *ip = *dip;
 }
 
-void rsect(uint sec, void *buf) {
+void rsect(uint sec, void *buf)
+{
     if (lseek(fsfd, sec * BSIZE, 0) != sec * BSIZE) {
         perror("lseek");
         exit(1);
@@ -239,7 +242,8 @@ void rsect(uint sec, void *buf) {
     }
 }
 
-uint ialloc(ushort type) {
+uint ialloc(ushort type)
+{
     uint inum = freeinode++;
     struct dinode din;
 
@@ -251,7 +255,8 @@ uint ialloc(ushort type) {
     return inum;
 }
 
-void balloc(int used) {
+void balloc(int used)
+{
     uchar buf[BSIZE];
     int i;
 
@@ -267,7 +272,8 @@ void balloc(int used) {
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
-void iappend(uint inum, void *xp, int n) {
+void iappend(uint inum, void *xp, int n)
+{
     char *p = (char *)xp;
     uint fbn, off, n1;
     struct dinode din;
