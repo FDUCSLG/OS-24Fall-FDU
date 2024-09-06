@@ -13,7 +13,7 @@ void main()
 {
     if (cpuid() == 0) {
         /* @todo: Clear BSS section.*/
-        memset(edata, end - edata, 0);
+        memset(edata, 0, end - edata);
 
         smp_init();
         uart_init();
