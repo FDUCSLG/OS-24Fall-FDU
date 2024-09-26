@@ -390,3 +390,5 @@ __attribute__((__aligned__(PAGE_SIZE))) PTEntries _kernel_pt_level1 = {
 __attribute__((__aligned__(PAGE_SIZE))) PTEntries kernel_pt_level0 = {
     K2P(_kernel_pt_level1) + PTE_TABLE
 };
+
+__attribute__((__aligned__(PAGE_SIZE))) PTEntries invalid_pt = { 0 };

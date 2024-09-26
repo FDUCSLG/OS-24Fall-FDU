@@ -24,30 +24,32 @@ ListNode *_merge_list(ListNode *node1, ListNode *node2);
 // the last one in the list, it will return NULL.
 ListNode *_detach_from_list(ListNode *node);
 // - walk through the list
-#define _for_in_list(valptr, list)                            \
-    for (ListNode *__flag = (list), *valptr = __flag; __flag; \
-         __flag = (valptr = valptr->next) == __flag ? (void *)0 : __flag)
+#define _for_in_list(valptr, list)                                  \
+    for (ListNode *__flag = (list), *valptr = __flag->next; valptr; \
+         valptr = valptr == __flag ? (void *)0 : valptr->next)
+// - test if the list is empty
+#define _empty_list(list) ((list)->next == (list))
 
 // * List operations with locks
 #define merge_list(lock, node1, node2)             \
     ({                                             \
-        acquire_spinlock(lock);                    \
+        _acquire_spinlock(lock);                   \
         ListNode *__t = _merge_list(node1, node2); \
-        release_spinlock(lock);                    \
+        _release_spinlock(lock);                   \
         __t;                                       \
     })
 #define insert_into_list(lock, list, node)             \
     ({                                                 \
-        acquire_spinlock(lock);                        \
+        _acquire_spinlock(lock);                       \
         ListNode *__t = _insert_into_list(list, node); \
-        release_spinlock(lock);                        \
+        _release_spinlock(lock);                       \
         __t;                                           \
     })
 #define detach_from_list(lock, node)             \
     ({                                           \
-        acquire_spinlock(lock);                  \
+        _acquire_spinlock(lock);                 \
         ListNode *__t = _detach_from_list(node); \
-        release_spinlock(lock);                  \
+        _release_spinlock(lock);                 \
         __t;                                     \
     })
 
@@ -61,3 +63,17 @@ QueueNode *add_to_queue(QueueNode **head, QueueNode *node);
 QueueNode *fetch_from_queue(QueueNode **head);
 // remove all nodes from the queue and return them as a single list
 QueueNode *fetch_all_from_queue(QueueNode **head);
+
+typedef struct Queue {
+    ListNode *begin;
+    ListNode *end;
+    int sz;
+    SpinLock lk;
+} Queue;
+void queue_init(Queue *x);
+void queue_lock(Queue *x);
+void queue_unlock(Queue *x);
+void queue_push(Queue *x, ListNode *item);
+void queue_pop(Queue *x);
+ListNode *queue_front(Queue *x);
+bool queue_empty(Queue *x);

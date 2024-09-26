@@ -10,7 +10,7 @@ typedef unsigned long long u64;
 #define MT_NORMAL_NC 0x2
 #define MT_DEVICE_nGnRnE_FLAGS 0x00
 #define MT_NORMAL_FLAGS \
-    0xFF                        /* Inner/Outer Write-Back Non-Transient RW-Allocate */
+    0xFF /* Inner/Outer Write-Back Non-Transient RW-Allocate */
 #define MT_NORMAL_NC_FLAGS 0x44 /* Inner/Outer Non-Cacheable */
 
 #define SH_OUTER (2 << 8)

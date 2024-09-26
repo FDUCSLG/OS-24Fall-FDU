@@ -262,6 +262,23 @@ static ALWAYS_INLINE void arch_yield()
     asm volatile("yield" ::: "memory");
 }
 
+static ALWAYS_INLINE u64 get_cntv_ctl_el0()
+{
+    u64 c;
+    asm volatile("mrs %0, cntv_ctl_el0" : "=r"(c));
+    return c;
+}
+
+static ALWAYS_INLINE void set_cntv_ctl_el0(u64 c)
+{
+    asm volatile("msr cntv_ctl_el0, %0" : : "r"(c));
+}
+
+static ALWAYS_INLINE void set_cntv_tval_el0(u64 t)
+{
+    asm volatile("msr cntv_tval_el0, %0" : : "r"(t));
+}
+
 static inline bool _arch_enable_trap()
 {
     u64 t;

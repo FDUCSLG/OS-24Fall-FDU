@@ -4,9 +4,14 @@
 #define MMIO_BASE (KERNEL_BASE + 0xA000000)
 #define LOCAL_BASE (KERNEL_BASE + 0x40000000)
 
-#define V2P(v) ((u64)(v) - VA_START)
-#define P2V(p) ((u64)(p) + VA_START)
+#define V2P(v) ((u64)(v) - KERNEL_BASE)
+#define P2V(p) ((u64)(p) + KERNEL_BASE)
 
-#define VA_START 0xFFFF000000000000
 #define PUARTBASE 0x9000000
 #define UARTBASE P2V(PUARTBASE)
+
+#define PGICBASE    0x08000000
+#define GICBASE     P2V(PGICBASE)
+
+#define PVIRTIO0    0x0A000000
+#define VIRTIO0     P2V(PVIRTIO0)
