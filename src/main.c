@@ -35,11 +35,11 @@ void main()
         /* initialize kernel memory allocator */
         kinit();
 
-        /* initialize kernel proc */
-        init_kproc();
-
         /* initialize sched */
         init_sched();
+
+        /* initialize kernel proc */
+        init_kproc();
 
         smp_init();
 
