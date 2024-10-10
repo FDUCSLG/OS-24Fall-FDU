@@ -74,3 +74,10 @@ NO_RETURN void exit(int code)
 
     PANIC(); // prevent the warning of 'no_return function returns'
 }
+
+int kill(int pid)
+{
+    // TODO:
+    // Set the killed flag of the proc to true and return 0.
+    // Return -1 if the pid is invalid (proc not found).
+}

@@ -11,33 +11,56 @@ void init_sem(Semaphore *sem, int val)
     init_list_node(&sem->sleeplist);
 }
 
-bool get_sem(Semaphore *sem)
+void _lock_sem(Semaphore *sem)
+{
+    acquire_spinlock(&sem->lock);
+}
+
+void _unlock_sem(Semaphore *sem)
+{
+    release_spinlock(&sem->lock);
+}
+
+bool _get_sem(Semaphore *sem)
 {
     bool ret = false;
-    acquire_spinlock(&sem->lock);
     if (sem->val > 0) {
         sem->val--;
         ret = true;
     }
-    release_spinlock(&sem->lock);
     return ret;
+}
+
+int _query_sem(Semaphore *sem)
+{
+    return sem->val;
 }
 
 int get_all_sem(Semaphore *sem)
 {
     int ret = 0;
-    acquire_spinlock(&sem->lock);
+    _lock_sem(sem);
     if (sem->val > 0) {
         ret = sem->val;
         sem->val = 0;
     }
-    release_spinlock(&sem->lock);
+    _unlock_sem(sem);
     return ret;
 }
 
-bool wait_sem(Semaphore *sem)
+int post_all_sem(Semaphore *sem)
 {
-    acquire_spinlock(&sem->lock);
+    int ret = -1;
+    _lock_sem(sem);
+    do
+        _post_sem(sem), ret++;
+    while (!_get_sem(sem));
+    _unlock_sem(sem);
+    return ret;
+}
+
+bool _wait_sem(Semaphore *sem)
+{
     if (--sem->val >= 0) {
         release_spinlock(&sem->lock);
         return true;
@@ -61,9 +84,8 @@ bool wait_sem(Semaphore *sem)
     return ret;
 }
 
-void post_sem(Semaphore *sem)
+void _post_sem(Semaphore *sem)
 {
-    acquire_spinlock(&sem->lock);
     if (++sem->val <= 0) {
         ASSERT(!_empty_list(&sem->sleeplist));
         auto wait = container_of(sem->sleeplist.prev, WaitData, slnode);
@@ -71,5 +93,4 @@ void post_sem(Semaphore *sem)
         _detach_from_list(&wait->slnode);
         activate_proc(wait->proc);
     }
-    release_spinlock(&sem->lock);
 }

@@ -25,7 +25,9 @@ NO_RETURN void idle_entry()
 NO_RETURN void kernel_entry()
 {
     printk("Hello world! (Core %lld)\n", cpuid());
-    proc_test();
+    // proc_test();
+    vm_test();
+    user_proc_test();
 
     while (1)
         yield();

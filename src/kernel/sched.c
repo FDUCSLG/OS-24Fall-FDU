@@ -85,6 +85,7 @@ void sched(enum procstate new_state)
     ASSERT(next->state == RUNNABLE);
     next->state = RUNNING;
     if (next != this) {
+        attach_pgdir(&next->pgdir);
         swtch(next->kcontext, &this->kcontext);
     }
     release_sched_lock();

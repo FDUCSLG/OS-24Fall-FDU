@@ -4,6 +4,7 @@
 #include <kernel/printk.h>
 #include <driver/interrupt.h>
 #include <kernel/proc.h>
+#include <kernel/syscall.h>
 
 void trap_global_handler(UserContext *context)
 {
@@ -26,7 +27,7 @@ void trap_global_handler(UserContext *context)
             interrupt_global_handler();
     } break;
     case ESR_EC_SVC64: {
-        PANIC();
+        syscall_entry(context);
     } break;
     case ESR_EC_IABORT_EL0:
     case ESR_EC_IABORT_EL1:
@@ -40,6 +41,8 @@ void trap_global_handler(UserContext *context)
         PANIC();
     }
     }
+
+    // TODO: stop killed process while returning to user space
 }
 
 NO_RETURN void trap_error_handler(u64 type)
