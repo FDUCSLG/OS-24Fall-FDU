@@ -14,7 +14,7 @@ void init_clock()
 {
     // reserve one second for the first time.
     enable_timer();
-    reset_clock(1000);
+    reset_clock(10);
 }
 
 void reset_clock(u64 interval_ms)

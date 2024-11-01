@@ -10,6 +10,7 @@
 #include <kernel/proc.h>
 #include <driver/gicv3.h>
 #include <driver/timer.h>
+#include <driver/virtio.h>
 
 static volatile bool boot_secondary_cpus = false;
 
@@ -20,7 +21,7 @@ void main()
         extern char edata[], end[];
         memset(edata, 0, (usize)(end - edata));
 
-        /* initialize interrupt handler */
+        /* Initialize interrupt handler. */
         init_interrupt();
 
         uart_init();
@@ -31,14 +32,16 @@ void main()
 
         init_clock_handler();
 
-        /* initialize kernel memory allocator */
+        /* Initialize kernel memory allocator. */
         kinit();
 
-        /* initialize sched */
+        /* Initialize sched. */
         init_sched();
 
-        /* initialize kernel proc */
+        /* Initialize kernel proc. */
         init_kproc();
+
+        virtio_init();
 
         smp_init();
 
