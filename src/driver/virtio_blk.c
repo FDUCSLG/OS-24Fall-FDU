@@ -14,8 +14,6 @@ struct disk {
     struct virtq virtq;
 } disk;
 
-usize sb_base = 0;
-
 static void desc_init(struct virtq *virtq)
 {
     for (int i = 0; i < NQUEUE; i++) {
@@ -253,6 +251,4 @@ void virtio_init()
 
     set_interrupt_handler(VIRTIO_BLK_IRQ, virtio_blk_intr);
     init_spinlock(&disk.lk);
-
-    // printk("%lld\n", sb_base);
 }
