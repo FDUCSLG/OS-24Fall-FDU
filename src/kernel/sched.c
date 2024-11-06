@@ -55,12 +55,12 @@ bool is_unused(Proc *p)
     return r;
 }
 
-bool activate_proc(Proc *p)
+bool _activate_proc(Proc *p, bool onalert)
 {
-    // TODO:
-    // if the proc->state is RUNNING/RUNNABLE, do nothing
-    // if the proc->state if SLEEPING/UNUSED, set the process state to RUNNABLE and add it to the sched queue
-    // else: panic
+    // TODO:(Lab5 new)
+    // if the proc->state is RUNNING/RUNNABLE, do nothing and return false
+    // if the proc->state is SLEEPING/UNUSED, set the process state to RUNNABLE, add it to the sched queue, and return true
+    // if the proc->state is DEEPSLEEPING, do nothing if onalert or activate it if else, and return the corresponding value.
 }
 
 static void update_this_state(enum procstate new_state)

@@ -2,8 +2,8 @@
 
 void kinit();
 
-void* kalloc_page();
+WARN_RESULT void* kalloc_page();
 void kfree_page(void*);
 
-void* kalloc(unsigned long long);
+WARN_RESULT void* kalloc(unsigned long long);
 void kfree(void*);

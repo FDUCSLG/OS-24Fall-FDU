@@ -1,15 +1,18 @@
 #pragma once
 
+#ifndef __cplusplus 
 #define true 1
 #define false 0
+#define auto __auto_type
+typedef char bool;
+#endif
+
 #define TRUE true
 #define FALSE false
 #ifndef NULL
 #define NULL 0
 #endif
-#define auto __auto_type
 
-typedef char bool;
 typedef signed char i8;
 typedef unsigned char u8;
 typedef signed short i16;
@@ -45,6 +48,7 @@ typedef u64 usize;
 #define ALWAYS_INLINE inline __attribute__((unused, always_inline))
 #define NO_INLINE __attribute__((noinline))
 #define NO_IPA __attribute__((noipa))
+#define WARN_RESULT __attribute__ ((warn_unused_result))
 
 // NOTE: no_return will disable traps.
 // NO_RETURN NO_INLINE void no_return();
