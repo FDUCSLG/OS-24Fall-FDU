@@ -26,7 +26,8 @@ void _unlock_sem(Semaphore *);
 int get_all_sem(Semaphore *);
 int post_all_sem(Semaphore *);
 #define wait_sem(sem) (_lock_sem(sem), _wait_sem(sem, true))
-#define unalertable_wait_sem(sem) ASSERT((_lock_sem(sem), _wait_sem(sem, false)))
+#define unalertable_wait_sem(sem) \
+    ASSERT((_lock_sem(sem), _wait_sem(sem, false)))
 #define post_sem(sem) (_lock_sem(sem), _post_sem(sem), _unlock_sem(sem))
 #define get_sem(sem)                \
     ({                              \

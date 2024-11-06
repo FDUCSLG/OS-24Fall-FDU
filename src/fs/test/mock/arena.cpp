@@ -4,18 +4,21 @@ extern "C" {
 
 #include "map.hpp"
 
-namespace {
-Map<struct Arena*, usize> map;
-Map<u8*, u8*> ref;
-}  // namespace
+namespace
+{
+Map<struct Arena *, usize> map;
+Map<u8 *, u8 *> ref;
+} // namespace
 
 extern "C" {
 
-void* kalloc(isize x) {
+void *kalloc(isize x)
+{
     return malloc(x);
 }
 
-void kfree(void* object) {
+void kfree(void *object)
+{
     free(object);
 }
 }

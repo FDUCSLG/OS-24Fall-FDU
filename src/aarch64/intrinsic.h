@@ -299,8 +299,9 @@ static inline WARN_RESULT bool _arch_disable_trap()
     return true;
 }
 
-#define arch_with_trap \
-    for (int __t_e = _arch_enable_trap(), __t_i = 0; __t_i < 1; __t_i++, __t_e || _arch_disable_trap())
+#define arch_with_trap                                          \
+    for (int __t_e = _arch_enable_trap(), __t_i = 0; __t_i < 1; \
+         __t_i++, __t_e || _arch_disable_trap())
 
 static ALWAYS_INLINE NO_RETURN void arch_stop_cpu()
 {

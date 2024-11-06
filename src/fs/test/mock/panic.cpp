@@ -11,7 +11,8 @@ extern "C" {
 #include "../exception.hpp"
 
 extern "C" {
-void _panic(const char* file, int line) {
+void _panic(const char *file, int line)
+{
     printf("(fatal) ");
     puts("");
     std::stringstream buf;

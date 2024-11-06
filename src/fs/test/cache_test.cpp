@@ -13,35 +13,41 @@ extern "C" {
 #include <random>
 #include <thread>
 
-namespace {
+namespace
+{
 
 constexpr int IN_CHILD = 0;
 
-static void wait_process(int pid) {
+static void wait_process(int pid)
+{
     int wstatus;
     waitpid(pid, &wstatus, 0);
     if (!WIFEXITED(wstatus)) {
         std::stringstream buf;
-        buf << "process [" << pid << "] exited abnormally with code " << wstatus;
+        buf << "process [" << pid << "] exited abnormally with code "
+            << wstatus;
         throw Internal(buf.str());
     }
 }
 
-}  // namespace
+} // namespace
 
-namespace basic {
+namespace basic
+{
 
-void test_init() {
+void test_init()
+{
     initialize(1, 1);
 }
 
 // targets: `acquire`, `release`, `sync(NULL, ...)`.
 
-void test_read_write() {
+void test_read_write()
+{
     initialize(1, 1);
 
-    auto* b = bcache.acquire(1);
-    auto* d = mock.inspect(1);
+    auto *b = bcache.acquire(1);
+    auto *d = mock.inspect(1);
     assert_eq(b->block_no, 1);
     assert_eq(b->valid, true);
 
@@ -58,11 +64,12 @@ void test_read_write() {
     b = bcache.acquire(1);
 }
 
-void test_loop_read() {
+void test_loop_read()
+{
     initialize(1, 128);
     constexpr usize num_rounds = 10;
     for (usize round = 0; round < num_rounds; round++) {
-        std::vector<Block*> p;
+        std::vector<Block *> p;
         p.resize(sblock.num_blocks);
 
         for (usize i = 0; i < sblock.num_blocks; i++) {
@@ -71,7 +78,7 @@ void test_loop_read() {
 
             assert_eq(p[i]->block_no, i);
 
-            auto* d = mock.inspect(i);
+            auto *d = mock.inspect(i);
             for (usize j = 0; j < BLOCK_SIZE; j++) {
                 assert_eq(p[i]->data[j], d[j]);
             }
@@ -84,11 +91,12 @@ void test_loop_read() {
     }
 }
 
-void test_reuse() {
+void test_reuse()
+{
     initialize(1, 500);
 
     constexpr usize num_rounds = 200;
-    constexpr usize blocks[] = {1, 123, 233, 399, 415};
+    constexpr usize blocks[] = { 1, 123, 233, 399, 415 };
 
     auto matched = [&](usize bno) {
         for (usize b : blocks) {
@@ -109,11 +117,11 @@ void test_reuse() {
     };
 
     for (usize round = 0; round < num_rounds; round++) {
-        std::vector<Block*> p;
+        std::vector<Block *> p;
         for (usize block_no : blocks) {
             p.push_back(bcache.acquire(block_no));
         }
-        for (auto* b : p) {
+        for (auto *b : p) {
             assert_eq(b->valid, true);
             bcache.release(b);
         }
@@ -123,7 +131,8 @@ void test_reuse() {
     assert_eq(wcnt, 0);
 }
 
-void test_lru() {
+void test_lru()
+{
     std::mt19937 gen(0xdeadbeef);
 
     usize cold_size = 1000;
@@ -133,14 +142,14 @@ void test_lru() {
         bool hot = (gen() % 100) <= 90;
         usize bno = hot ? (gen() % hot_size) : (hot_size + gen() % cold_size);
 
-        auto* b = bcache.acquire(bno);
-        auto* d = mock.inspect(bno);
+        auto *b = bcache.acquire(bno);
+        auto *d = mock.inspect(bno);
         assert_eq(b->data[123], d[123]);
         bcache.release(b);
     }
 
-    printf("(debug) #cached = %zu, #read = %zu\n", bcache.get_num_cached_blocks(),
-           mock.read_count.load());
+    printf("(debug) #cached = %zu, #read = %zu\n",
+           bcache.get_num_cached_blocks(), mock.read_count.load());
     assert_true(bcache.get_num_cached_blocks() <= EVICTION_THRESHOLD);
     assert_true(mock.read_count < 233);
     assert_true(mock.write_count < 5);
@@ -148,7 +157,8 @@ void test_lru() {
 
 // targets: `begin_op`, `end_op`, `sync`.
 
-void test_atomic_op() {
+void test_atomic_op()
+{
     initialize(32, 64);
 
     OpContext ctx;
@@ -158,10 +168,10 @@ void test_atomic_op() {
     bcache.begin_op(&ctx);
 
     usize t = sblock.num_blocks - 1;
-    auto* b = bcache.acquire(t);
+    auto *b = bcache.acquire(t);
     assert_eq(b->block_no, t);
     assert_eq(b->valid, true);
-    auto* d = mock.inspect(t);
+    auto *d = mock.inspect(t);
     u8 v = d[128];
     assert_eq(b->data[128], v);
 
@@ -175,13 +185,13 @@ void test_atomic_op() {
 
     bcache.begin_op(&ctx);
 
-    auto* b1 = bcache.acquire(t - 1);
-    auto* b2 = bcache.acquire(t - 2);
+    auto *b1 = bcache.acquire(t - 1);
+    auto *b2 = bcache.acquire(t - 2);
     assert_eq(b1->block_no, t - 1);
     assert_eq(b2->block_no, t - 2);
 
-    auto* d1 = mock.inspect(t - 1);
-    auto* d2 = mock.inspect(t - 2);
+    auto *d1 = mock.inspect(t - 1);
+    auto *d2 = mock.inspect(t - 2);
     u8 v1 = d1[500];
     u8 v2 = d2[10];
     assert_eq(b1->data[500], v1);
@@ -201,7 +211,8 @@ void test_atomic_op() {
     assert_eq(d2[10], ~v2);
 }
 
-void test_overflow() {
+void test_overflow()
+{
     initialize(100, 100);
 
     OpContext ctx;
@@ -209,25 +220,26 @@ void test_overflow() {
 
     usize t = sblock.num_blocks - 1;
     for (usize i = 0; i < OP_MAX_NUM_BLOCKS; i++) {
-        auto* b = bcache.acquire(t - i);
+        auto *b = bcache.acquire(t - i);
         b->data[0] = 0xaa;
         bcache.sync(&ctx, b);
         bcache.release(b);
     }
 
     bool panicked = false;
-    auto* b = bcache.acquire(t - OP_MAX_NUM_BLOCKS);
+    auto *b = bcache.acquire(t - OP_MAX_NUM_BLOCKS);
     b->data[128] = 0x88;
     try {
         bcache.sync(&ctx, b);
-    } catch (const Panic&) {
+    } catch (const Panic &) {
         panicked = true;
     }
 
     assert_eq(panicked, true);
 }
 
-void test_resident() {
+void test_resident()
+{
     // NOTE: this test may be a little controversial.
     // the main ideas are:
     // 1. dirty blocks should be pinned in block cache before `end_op`.
@@ -236,7 +248,7 @@ void test_resident() {
     initialize(OP_MAX_NUM_BLOCKS, 500);
 
     constexpr usize num_rounds = 200;
-    constexpr usize blocks[] = {1, 123, 233, 399, 415};
+    constexpr usize blocks[] = { 1, 123, 233, 399, 415 };
 
     auto matched = [&](usize bno) {
         for (usize b : blocks) {
@@ -257,7 +269,7 @@ void test_resident() {
         bcache.begin_op(&ctx);
 
         for (usize block_no : blocks) {
-            auto* b = bcache.acquire(block_no);
+            auto *b = bcache.acquire(block_no);
             assert_eq(b->valid, true);
             b->data[0] = 0;
             bcache.sync(&ctx, b);
@@ -270,7 +282,8 @@ void test_resident() {
     assert_true(rcnt < 10);
 }
 
-void test_local_absorption() {
+void test_local_absorption()
+{
     constexpr usize num_rounds = 1000;
 
     initialize(100, 100);
@@ -280,7 +293,7 @@ void test_local_absorption() {
     usize t = sblock.num_blocks - 1;
     for (usize i = 0; i < num_rounds; i++) {
         for (usize j = 0; j < OP_MAX_NUM_BLOCKS; j++) {
-            auto* b = bcache.acquire(t - j);
+            auto *b = bcache.acquire(t - j);
             b->data[0] = 0xcd;
             bcache.sync(&ctx, b);
             bcache.release(b);
@@ -291,12 +304,13 @@ void test_local_absorption() {
     assert_true(mock.read_count < OP_MAX_NUM_BLOCKS * 5);
     assert_true(mock.write_count < OP_MAX_NUM_BLOCKS * 5);
     for (usize j = 0; j < OP_MAX_NUM_BLOCKS; j++) {
-        auto* b = mock.inspect(t - j);
+        auto *b = mock.inspect(t - j);
         assert_eq(b[0], 0xcd);
     }
 }
 
-void test_global_absorption() {
+void test_global_absorption()
+{
     constexpr usize op_size = 3;
     constexpr usize num_workers = 100;
 
@@ -307,7 +321,7 @@ void test_global_absorption() {
     bcache.begin_op(&out);
 
     for (usize i = 0; i < OP_MAX_NUM_BLOCKS; i++) {
-        auto* b = bcache.acquire(t - i);
+        auto *b = bcache.acquire(t - i);
         b->data[0] = 0xcc;
         bcache.sync(&out, b);
         bcache.release(b);
@@ -321,7 +335,7 @@ void test_global_absorption() {
     for (usize i = 0; i < num_workers; i++) {
         bcache.begin_op(&ctx[i]);
         for (usize j = 0; j < op_size; j++) {
-            auto* b = bcache.acquire(t - j);
+            auto *b = bcache.acquire(t - j);
             b->data[0] = 0xdd;
             bcache.sync(&ctx[i], b);
             bcache.release(b);
@@ -330,31 +344,32 @@ void test_global_absorption() {
     }
 
     workers.emplace_back([&] { bcache.end_op(&out); });
-    for (auto& worker : workers) {
+    for (auto &worker : workers) {
         worker.join();
     }
     for (usize i = 0; i < op_size; i++) {
-        auto* b = mock.inspect(t - i);
+        auto *b = mock.inspect(t - i);
         assert_eq(b[0], 0xdd);
     }
 
     for (usize i = op_size; i < OP_MAX_NUM_BLOCKS; i++) {
-        auto* b = mock.inspect(t - i);
+        auto *b = mock.inspect(t - i);
         assert_eq(b[0], 0xcc);
     }
 }
 
 // target: replay at initialization.
 
-void test_replay() {
+void test_replay()
+{
     initialize_mock(50, 1000);
 
-    auto* header = mock.inspect_log_header();
+    auto *header = mock.inspect_log_header();
     header->num_blocks = 5;
     for (usize i = 0; i < 5; i++) {
         usize v = 500 + i;
         header->block_no[i] = v;
-        auto* b = mock.inspect_log(i);
+        auto *b = mock.inspect_log(i);
         for (usize j = 0; j < BLOCK_SIZE; j++) {
             b[j] = v & 0xff;
         }
@@ -365,7 +380,7 @@ void test_replay() {
     assert_eq(header->num_blocks, 0);
     for (usize i = 0; i < 5; i++) {
         usize v = 500 + i;
-        auto* b = mock.inspect(v);
+        auto *b = mock.inspect(v);
         for (usize j = 0; j < BLOCK_SIZE; j++) {
             assert_eq(b[j], v & 0xff);
         }
@@ -374,7 +389,8 @@ void test_replay() {
 
 // targets: `alloc`, `free`.
 
-void test_alloc() {
+void test_alloc()
+{
     initialize(100, 100);
 
     std::vector<usize> bno;
@@ -387,14 +403,14 @@ void test_alloc() {
         assert_ne(bno[i], 0);
         assert_true(bno[i] < sblock.num_blocks);
 
-        auto* b = bcache.acquire(bno[i]);
+        auto *b = bcache.acquire(bno[i]);
         for (usize j = 0; j < BLOCK_SIZE; j++) {
             assert_eq(b->data[j], 0);
         }
         bcache.release(b);
 
         bcache.end_op(&ctx);
-        auto* d = mock.inspect(bno[i]);
+        auto *d = mock.inspect(bno[i]);
         for (usize j = 0; j < BLOCK_SIZE; j++) {
             assert_eq(d[j], 0);
         }
@@ -411,14 +427,15 @@ void test_alloc() {
     try {
         usize b = bcache.alloc(&ctx);
         assert_ne(b, 0);
-    } catch (const Panic&) {
+    } catch (const Panic &) {
         panicked = true;
     }
 
     assert_eq(panicked, true);
 }
 
-void test_alloc_free() {
+void test_alloc_free()
+{
     constexpr usize num_rounds = 5;
     constexpr usize num_data_blocks = 1000;
 
@@ -465,11 +482,13 @@ void test_alloc_free() {
     }
 }
 
-}  // namespace basic
+} // namespace basic
 
-namespace concurrent {
+namespace concurrent
+{
 
-void test_acquire() {
+void test_acquire()
+{
     constexpr usize num_rounds = 100;
     constexpr usize num_workers = 64;
 
@@ -487,7 +506,7 @@ void test_acquire() {
                     }
 
                     usize t = sblock.num_blocks - 1 - i;
-                    auto* b = bcache.acquire(t);
+                    auto *b = bcache.acquire(t);
                     assert_eq(b->block_no, t);
                     assert_eq(b->valid, true);
                     bcache.release(b);
@@ -495,7 +514,7 @@ void test_acquire() {
             }
 
             flag = true;
-            for (auto& worker : workers) {
+            for (auto &worker : workers) {
                 worker.join();
             }
 
@@ -506,7 +525,8 @@ void test_acquire() {
     }
 }
 
-void test_sync() {
+void test_sync()
+{
     constexpr int num_rounds = 100;
 
     initialize(OP_MAX_NUM_BLOCKS * OP_MAX_NUM_BLOCKS, OP_MAX_NUM_BLOCKS);
@@ -528,8 +548,8 @@ void test_sync() {
                     cv.wait(lock, [&] { return j <= round; });
                 }
 
-                auto* b = bcache.acquire(t);
-                int* p = reinterpret_cast<int*>(b->data);
+                auto *b = bcache.acquire(t);
+                int *p = reinterpret_cast<int *>(b->data);
                 *p = cookie(i, j);
                 bcache.sync(&ctx, b);
                 bcache.release(b);
@@ -546,7 +566,8 @@ void test_sync() {
 
     auto check = [&](int j) {
         for (int i = 0; i < OP_MAX_NUM_BLOCKS; i++) {
-            int* b = reinterpret_cast<int*>(mock.inspect(sblock.num_blocks - 1 - i));
+            int *b = reinterpret_cast<int *>(
+                    mock.inspect(sblock.num_blocks - 1 - i));
             assert_eq(*b, cookie(i, j));
         }
     };
@@ -568,12 +589,13 @@ void test_sync() {
         }
     }
 
-    for (auto& worker : workers) {
+    for (auto &worker : workers) {
         worker.join();
     }
 }
 
-void test_alloc() {
+void test_alloc()
+{
     initialize(100, 1000);
 
     std::vector<usize> bno(1000);
@@ -590,7 +612,7 @@ void test_alloc() {
         });
     }
 
-    for (auto& worker : workers) {
+    for (auto &worker : workers) {
         worker.join();
     }
     std::sort(bno.begin(), bno.end());
@@ -600,18 +622,20 @@ void test_alloc() {
     assert_true(bno.back() < sblock.num_blocks);
 }
 
-}  // namespace concurrent
+} // namespace concurrent
 
-namespace crash {
+namespace crash
+{
 
-void test_simple_crash() {
+void test_simple_crash()
+{
     int child;
     if ((child = fork()) == IN_CHILD) {
         initialize(100, 100);
 
         OpContext ctx;
         bcache.begin_op(&ctx);
-        auto* b = bcache.acquire(150);
+        auto *b = bcache.acquire(150);
         b->data[200] = 0x19;
         b->data[201] = 0x26;
         b->data[202] = 0x08;
@@ -633,7 +657,7 @@ void test_simple_crash() {
 
         try {
             bcache.end_op(&ctx);
-        } catch (const Offline&) {
+        } catch (const Offline &) {
         }
 
         mock.dump("sd.img");
@@ -643,7 +667,7 @@ void test_simple_crash() {
         wait_process(child);
         initialize_mock(100, 100, "sd.img");
 
-        auto* b = mock.inspect(150);
+        auto *b = mock.inspect(150);
         assert_eq(b[200], 0x19);
         assert_eq(b[201], 0x26);
         assert_eq(b[202], 0x08);
@@ -657,7 +681,9 @@ void test_simple_crash() {
     }
 }
 
-void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize log_cut) {
+void test_parallel(usize num_rounds, usize num_workers, usize delay_ms,
+                   usize log_cut)
+{
     usize log_size = num_workers * OP_MAX_NUM_BLOCKS - log_cut;
     usize num_data_blocks = 200 + num_workers * OP_MAX_NUM_BLOCKS;
 
@@ -670,7 +696,7 @@ void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize lo
         if ((child = fork()) == IN_CHILD) {
             initialize_mock(log_size, num_data_blocks);
             for (usize i = 0; i < num_workers * OP_MAX_NUM_BLOCKS; i++) {
-                auto* b = mock.inspect(200 + i);
+                auto *b = mock.inspect(200 + i);
                 std::fill(b, b + BLOCK_SIZE, 0);
             }
 
@@ -687,9 +713,11 @@ void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize lo
                             OpContext ctx;
                             bcache.begin_op(&ctx);
                             for (usize j = 0; j < OP_MAX_NUM_BLOCKS; j++) {
-                                auto* b = bcache.acquire(t + j);
-                                for (usize k = 0; k < BLOCK_SIZE; k += sizeof(u64)) {
-                                    u64* p = reinterpret_cast<u64*>(b->data + k);
+                                auto *b = bcache.acquire(t + j);
+                                for (usize k = 0; k < BLOCK_SIZE;
+                                     k += sizeof(u64)) {
+                                    u64 *p = reinterpret_cast<u64 *>(b->data +
+                                                                     k);
                                     *p = v;
                                 }
                                 bcache.sync(&ctx, b);
@@ -699,7 +727,7 @@ void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize lo
 
                             v++;
                         }
-                    } catch (const Offline&) {
+                    } catch (const Offline &) {
                     }
                 }).detach();
             }
@@ -708,7 +736,8 @@ void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize lo
             std::thread aha([&] {
                 while (!started) {
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
+                std::this_thread::sleep_for(
+                        std::chrono::milliseconds(delay_ms));
                 mock.offline = true;
             });
 
@@ -718,7 +747,7 @@ void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize lo
         } else {
             wait_process(child);
             initialize_mock(log_size, num_data_blocks, "sd.img");
-            auto* header = mock.inspect_log_header();
+            auto *header = mock.inspect_log_header();
             if (header->num_blocks > 0)
                 replay_count++;
 
@@ -728,12 +757,12 @@ void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize lo
 
                 for (usize i = 0; i < num_workers; i++) {
                     usize t = 200 + i * OP_MAX_NUM_BLOCKS;
-                    u64 v = *reinterpret_cast<u64*>(mock.inspect(t));
+                    u64 v = *reinterpret_cast<u64 *>(mock.inspect(t));
 
                     for (usize j = 0; j < OP_MAX_NUM_BLOCKS; j++) {
-                        auto* b = mock.inspect(t + j);
+                        auto *b = mock.inspect(t + j);
                         for (usize k = 0; k < BLOCK_SIZE; k += sizeof(u64)) {
-                            u64 u = *reinterpret_cast<u64*>(b + k);
+                            u64 u = *reinterpret_cast<u64 *>(b + k);
                             assert_eq(u, v);
                         }
                     }
@@ -744,14 +773,16 @@ void test_parallel(usize num_rounds, usize num_workers, usize delay_ms, usize lo
                 wait_process(child);
         }
 
-        printf("\r(trace) running: %zu/%zu (%zu replayed)", round + 1, num_rounds, replay_count);
+        printf("\r(trace) running: %zu/%zu (%zu replayed)", round + 1,
+               num_rounds, replay_count);
         fflush(stdout);
     }
 
     puts("");
 }
 
-void test_banker() {
+void test_banker()
+{
     using namespace std::chrono_literals;
 
     constexpr i64 initial = 1000;
@@ -779,8 +810,8 @@ void test_banker() {
                 OpContext ctx;
                 bcache.begin_op(&ctx);
                 bno.push_back(bcache.alloc(&ctx));
-                auto* b = bcache.acquire(bno.back());
-                i64* p = reinterpret_cast<i64*>(b->data);
+                auto *b = bcache.acquire(bno.back());
+                i64 *p = reinterpret_cast<i64 *>(b->data);
                 *p = initial;
                 bcache.sync(&ctx, b);
                 bcache.release(b);
@@ -797,7 +828,8 @@ void test_banker() {
                     started = true;
                     try {
                         while (true) {
-                            usize j = gen() % num_accounts, k = gen() % num_accounts;
+                            usize j = gen() % num_accounts,
+                                  k = gen() % num_accounts;
                             if (j == k)
                                 k = (k + 1) % num_accounts;
 
@@ -813,8 +845,8 @@ void test_banker() {
                                 bj = bcache.acquire(bno[j]);
                             }
 
-                            i64* vj = reinterpret_cast<i64*>(bj->data);
-                            i64* vk = reinterpret_cast<i64*>(bk->data);
+                            i64 *vj = reinterpret_cast<i64 *>(bj->data);
+                            i64 *vk = reinterpret_cast<i64 *>(bk->data);
                             i64 transfer = std::min(*vj, (i64)(gen() % bill));
 
                             *vj -= transfer;
@@ -828,7 +860,7 @@ void test_banker() {
                             bcache.end_op(&ctx);
                             count++;
                         }
-                    } catch (const Offline&) {
+                    } catch (const Offline &) {
                     }
                 }).detach();
             }
@@ -839,8 +871,10 @@ void test_banker() {
             mock.offline = true;
 
             auto end_ts = std::chrono::steady_clock::now();
-            auto duration
-                = std::chrono::duration_cast<std::chrono::milliseconds>(end_ts - begin_ts).count();
+            auto duration =
+                    std::chrono::duration_cast<std::chrono::milliseconds>(
+                            end_ts - begin_ts)
+                            .count();
             printf("\r\033[K(trace) throughput = %.2f txn/s\n",
                    static_cast<double>(count) * 1000 / duration);
             fflush(stdout);
@@ -850,7 +884,7 @@ void test_banker() {
         } else {
             wait_process(child);
             initialize_mock(log_size, num_accounts, "sd.img");
-            auto* header = mock.inspect_log_header();
+            auto *header = mock.inspect_log_header();
             if (header->num_blocks > 0)
                 replay_count++;
 
@@ -860,7 +894,7 @@ void test_banker() {
                 i64 sum = 0;
                 usize t = sblock.num_blocks - num_accounts;
                 for (usize i = 0; i < num_accounts; i++) {
-                    i64 value = *reinterpret_cast<i64*>(mock.inspect(t + i));
+                    i64 value = *reinterpret_cast<i64 *>(mock.inspect(t + i));
                     assert_true(value >= 0);
                     sum += value;
                 }
@@ -871,42 +905,45 @@ void test_banker() {
                 wait_process(child);
         }
 
-        printf("\r(trace) running: %zu/%zu (%zu replayed)", round + 1, num_rounds, replay_count);
+        printf("\r(trace) running: %zu/%zu (%zu replayed)", round + 1,
+               num_rounds, replay_count);
         fflush(stdout);
     }
 
     puts("");
 }
 
-}  // namespace crash
+} // namespace crash
 
-int main() {
+int main()
+{
     std::vector<Testcase> tests = {
-        {"init", basic::test_init},
-        {"read_write", basic::test_read_write},
-        {"loop_read", basic::test_loop_read},
-        {"reuse", basic::test_reuse},
-        {"lru", basic::test_lru},
-        {"atomic_op", basic::test_atomic_op},
-        {"overflow", basic::test_overflow},
-        {"resident", basic::test_resident},
-        {"local_absorption", basic::test_local_absorption},
-        {"global_absorption", basic::test_global_absorption},
-        {"replay", basic::test_replay},
-        {"alloc", basic::test_alloc},
-        {"alloc_free", basic::test_alloc_free},
+        { "init", basic::test_init },
+        { "read_write", basic::test_read_write },
+        { "loop_read", basic::test_loop_read },
+        { "reuse", basic::test_reuse },
+        { "lru", basic::test_lru },
+        { "atomic_op", basic::test_atomic_op },
+        { "overflow", basic::test_overflow },
+        { "resident", basic::test_resident },
+        { "local_absorption", basic::test_local_absorption },
+        { "global_absorption", basic::test_global_absorption },
+        { "replay", basic::test_replay },
+        { "alloc", basic::test_alloc },
+        { "alloc_free", basic::test_alloc_free },
 
-        {"concurrent_acquire", concurrent::test_acquire},
-        {"concurrent_sync", concurrent::test_sync},
-        {"concurrent_alloc", concurrent::test_alloc},
+        { "concurrent_acquire", concurrent::test_acquire },
+        { "concurrent_sync", concurrent::test_sync },
+        { "concurrent_alloc", concurrent::test_alloc },
 
-        {"simple_crash", crash::test_simple_crash},
-        {"single", [] { crash::test_parallel(1000, 1, 5, 0); }},
-        {"parallel_1", [] { crash::test_parallel(1000, 2, 5, 0); }},
-        {"parallel_2", [] { crash::test_parallel(1000, 4, 5, 0); }},
-        {"parallel_3", [] { crash::test_parallel(500, 4, 10, 1); }},
-        {"parallel_4", [] { crash::test_parallel(500, 4, 10, 2 * OP_MAX_NUM_BLOCKS); }},
-        {"banker", crash::test_banker},
+        { "simple_crash", crash::test_simple_crash },
+        { "single", [] { crash::test_parallel(1000, 1, 5, 0); } },
+        { "parallel_1", [] { crash::test_parallel(1000, 2, 5, 0); } },
+        { "parallel_2", [] { crash::test_parallel(1000, 4, 5, 0); } },
+        { "parallel_3", [] { crash::test_parallel(500, 4, 10, 1); } },
+        { "parallel_4",
+          [] { crash::test_parallel(500, 4, 10, 2 * OP_MAX_NUM_BLOCKS); } },
+        { "banker", crash::test_banker },
     };
     Runner(tests).run();
 

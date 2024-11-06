@@ -9,7 +9,6 @@ bool _activate_proc(Proc *, bool onalert);
 #define activate_proc(proc) _activate_proc(proc, false)
 #define alert_proc(proc) _activate_proc(proc, true)
 
-
 WARN_RESULT bool is_zombie(Proc *);
 WARN_RESULT bool is_unused(Proc *);
 void acquire_sched_lock();
