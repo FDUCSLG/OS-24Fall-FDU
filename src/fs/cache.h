@@ -106,40 +106,7 @@ typedef struct {
     usize ts;
 } OpContext;
 
-/**
-    @brief interface for block caches.
 
-    Here are some examples of using block caches as a normal caller:
-
-    ## Read a block
-
-    ```c
-    Block *block = bcache->acquire(block_no);
-
-    // ... read block->data here ...
-
-    bcache->release(block);
-    ```
-
-    ## Write a block
-
-    ```c
-    // define an atomic operation context
-    OpContext ctx;
-
-    // begin an atomic operation
-    bcache->begin_op(&ctx);
-    Block *block = bcache->acquire(block_no);
-
-    // ... modify block->data here ...
-
-    // notify the block cache that "I have modified block->data"
-    bcache->sync(&ctx, block);
-    bcache->release(block);
-    // end the atomic operation
-    bcache->end_op(&ctx);
-    ```
- */
 typedef struct {
     /**
         @return the number of cached blocks at this moment.

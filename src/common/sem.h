@@ -41,4 +41,4 @@ int post_all_sem(Semaphore *);
 #define init_sleeplock(lock) init_sem(lock, 1)
 #define acquire_sleeplock(lock) wait_sem(lock)
 #define unalertable_acquire_sleeplock(lock) unalertable_wait_sem(lock)
-#define release_sleeplock(checker) post_sem(lock)
+#define release_sleeplock(lock) post_sem(lock)
