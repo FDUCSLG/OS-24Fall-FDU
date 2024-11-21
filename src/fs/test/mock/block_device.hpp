@@ -63,7 +63,7 @@ struct MockBlockDevice {
             throw Internal("logging area is too small");
         disk[sblock->log_start].fill_zero();
 
-        usize num_bitmap_blocks = (sblock->num_data_blocks + BIT_PER_BLOCK - 1) / BIT_PER_BLOCK;
+        usize num_bitmap_blocks = (sblock->num_blocks + BIT_PER_BLOCK - 1) / BIT_PER_BLOCK;
         for (usize i = 0; i < num_bitmap_blocks; i++) {
             disk[sblock->bitmap_start + i].fill_zero();
         }
