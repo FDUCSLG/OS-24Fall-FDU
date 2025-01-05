@@ -30,3 +30,7 @@ void* kalloc(unsigned long long size) {
 void kfree(void* ptr) {
     return;
 }
+
+void* get_zero_page() {
+    return NULL;
+}
