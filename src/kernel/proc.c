@@ -5,6 +5,7 @@
 #include <common/list.h>
 #include <common/string.h>
 #include <kernel/printk.h>
+#include <kernel/paging.h>
 
 Proc root_proc;
 

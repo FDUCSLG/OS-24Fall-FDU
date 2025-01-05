@@ -13,12 +13,13 @@ set(compiler_warnings "-Werror -Wall -Wextra")
 set(compiler_flags "${compiler_warnings} \
     -fno-pie -fno-pic -fno-stack-protector \
     -fno-zero-initialized-in-bss \
-    -Og -g -static -fno-builtin -nostdlib -nostdinc -ffreestanding -nostartfiles \
+    -g -Og -static \
+    -fno-builtin -nostdlib -nostdinc -ffreestanding -nostartfiles \
     -Wl,--whole-archive \
     -mgeneral-regs-only \
     -MMD -MP \
     -mlittle-endian -mcmodel=small -mno-outline-atomics \
-    -mcpu=cortex-a72+nofp -mtune=cortex-a72 -DUSE_ARMVIRT -Wno-error=unused-parameter")
+    -mcpu=cortex-a53 -mtune=cortex-a53")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${compiler_flags}")
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${compiler_flags}")
@@ -37,10 +38,11 @@ add_subdirectory(kernel)
 add_subdirectory(driver)
 add_subdirectory(user)
 add_subdirectory(test)
+add_subdirectory(fs)
 
 set(kernel_name kernel8)
 add_executable(${kernel_name}.elf main.c start.S)
-target_link_libraries(${kernel_name}.elf test kernelx driver common aarch64 user)
+target_link_libraries(${kernel_name}.elf test kernelx user driver fs common aarch64)
 
 set(kernel_prefix "${CMAKE_CURRENT_BINARY_DIR}/${kernel_name}")
 set(kernel_elf "${kernel_prefix}.elf")
