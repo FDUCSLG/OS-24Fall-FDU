@@ -34,8 +34,7 @@ NO_RETURN void kernel_entry()
     
     /* LAB 4 TODO 3 END */
 
-    while (1)
-        yield();
+    // FINAL TODO: map init.S to user space and trap_return to run icode
 }
 
 NO_INLINE NO_RETURN void _panic(const char *file, int line)
