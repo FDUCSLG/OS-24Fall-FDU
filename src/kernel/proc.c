@@ -82,3 +82,20 @@ int kill(int pid)
     // Set the killed flag of the proc to true and return 0.
     // Return -1 if the pid is invalid (proc not found).
 }
+
+/*
+ * Create a new process copying p as the parent.
+ * Sets up stack to return as if from system call.
+ */
+void trap_return();
+int fork()
+{
+    // TODO:
+    // 1. create a new proc
+    // 2. copy the parent's memory
+    // 3. copy the parent's trapframe
+    // 4. set the parent of the new proc to the parent of the parent
+    // 5. set the state of the new proc to RUNNABLE
+    // 6. activate the new proc and return its pid
+    // NOTE: be careful of concurrency
+}

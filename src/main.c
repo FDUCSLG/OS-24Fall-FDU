@@ -35,6 +35,9 @@ void main()
         /* Initialize kernel memory allocator. */
         kinit();
 
+        /* Initialize syscall. */
+        init_syscall();
+
         /* Initialize sched. */
         init_sched();
 

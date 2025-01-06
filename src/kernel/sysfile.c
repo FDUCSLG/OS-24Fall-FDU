@@ -8,6 +8,8 @@
 #include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/sysmacros.h>
+#include <sys/mman.h>
+#include <stddef.h>
 
 #include "syscall.h"
 #include <aarch64/mmu.h>
@@ -26,12 +28,13 @@
 
 struct iovec {
     void *iov_base; /* Starting address. */
-    usize iov_len;  /* Number of bytes to transfer. */
+    usize iov_len; /* Number of bytes to transfer. */
 };
 
 // get the file object by fd
 // return null if the fd is invalid
-static struct file *fd2file(int fd) {
+static struct file *fd2file(int fd)
+{
     // TODO
 }
 
@@ -39,13 +42,15 @@ static struct file *fd2file(int fd) {
  * Allocate a file descriptor for the given file.
  * Takes over file reference from caller on success.
  */
-int fdalloc(struct file *f) {
+int fdalloc(struct file *f)
+{
     /* TODO: Lab10 Shell */
     return -1;
 }
 
 // ioctl - control device
-define_syscall(ioctl, int fd, u64 request) {
+define_syscall(ioctl, int fd, u64 request)
+{
     // 0x5413 is TIOCGWINSZ (I/O Control to Get the WINdow SIZe, a magic request
     // to get the stdin terminal size) in our implementation. Just ignore it.
     ASSERT(request == 0x5413);
@@ -55,17 +60,20 @@ define_syscall(ioctl, int fd, u64 request) {
 
 // mmap - map files or devices into memory
 define_syscall(mmap, void *addr, int length, int prot, int flags, int fd,
-               int offset) {
+               int offset)
+{
     // TODO
 }
 
 // munmap - unmap files or devices into memory
-define_syscall(munmap, void *addr, size_t length) {
+define_syscall(munmap, void *addr, size_t length)
+{
     // TODO
 }
 
 // dup - duplicate a file descriptor
-define_syscall(dup, int fd) {
+define_syscall(dup, int fd)
+{
     struct file *f = fd2file(fd);
     if (!f)
         return -1;
@@ -77,7 +85,8 @@ define_syscall(dup, int fd) {
 }
 
 // read - read from a file descriptor
-define_syscall(read, int fd, char *buffer, int size) {
+define_syscall(read, int fd, char *buffer, int size)
+{
     struct file *f = fd2file(fd);
     if (!f || size <= 0 || !user_writeable(buffer, size))
         return -1;
@@ -85,7 +94,8 @@ define_syscall(read, int fd, char *buffer, int size) {
 }
 
 // write - write to a file descriptor
-define_syscall(write, int fd, char *buffer, int size) {
+define_syscall(write, int fd, char *buffer, int size)
+{
     struct file *f = fd2file(fd);
     if (!f || size <= 0 || !user_readable(buffer, size))
         return -1;
@@ -93,7 +103,8 @@ define_syscall(write, int fd, char *buffer, int size) {
 }
 
 // writev - write data into multiple buffers
-define_syscall(writev, int fd, struct iovec *iov, int iovcnt) {
+define_syscall(writev, int fd, struct iovec *iov, int iovcnt)
+{
     struct file *f = fd2file(fd);
     struct iovec *p;
     if (!f || iovcnt <= 0 || !user_readable(iov, sizeof(struct iovec) * iovcnt))
@@ -108,13 +119,15 @@ define_syscall(writev, int fd, struct iovec *iov, int iovcnt) {
 }
 
 // close - close a file descriptor
-define_syscall(close, int fd) {
+define_syscall(close, int fd)
+{
     /* TODO: LabFinal */
     return 0;
 }
 
 // fstat - get file status
-define_syscall(fstat, int fd, struct stat *st) {
+define_syscall(fstat, int fd, struct stat *st)
+{
     struct file *f = fd2file(fd);
     if (!f || !user_writeable(st, sizeof(*st)))
         return -1;
@@ -124,7 +137,8 @@ define_syscall(fstat, int fd, struct stat *st) {
 // newfstatat - get file status (on some platform also called fstatat64, i.e. a
 // 64-bit version of fstatat)
 define_syscall(newfstatat, int dirfd, const char *path, struct stat *st,
-               int flags) {
+               int flags)
+{
     if (!user_strlen(path, 256) || !user_writeable(st, sizeof(*st)))
         return -1;
     if (dirfd != AT_FDCWD) {
@@ -153,7 +167,8 @@ define_syscall(newfstatat, int dirfd, const char *path, struct stat *st,
 }
 
 // is the directory `dp` empty except for "." and ".." ?
-static int isdirempty(Inode *dp) {
+static int isdirempty(Inode *dp)
+{
     usize off;
     DirEntry de;
 
@@ -167,7 +182,8 @@ static int isdirempty(Inode *dp) {
 }
 
 // unlinkat - delete a name and possibly the file it refers to
-define_syscall(unlinkat, int fd, const char *path, int flag) {
+define_syscall(unlinkat, int fd, const char *path, int flag)
+{
     ASSERT(fd == AT_FDCWD && flag == 0);
     Inode *ip, *dp;
     DirEntry de;
@@ -244,13 +260,15 @@ bad:
     @return Inode* the created inode, or NULL if failed.
  */
 Inode *create(const char *path, short type, short major, short minor,
-              OpContext *ctx) {
+              OpContext *ctx)
+{
     /* TODO: LabFinal */
     return 0;
 }
 
 // openat - open a file
-define_syscall(openat, int dirfd, const char *path, int omode) {
+define_syscall(openat, int dirfd, const char *path, int omode)
+{
     int fd;
     struct file *f;
     Inode *ip;
@@ -300,7 +318,8 @@ define_syscall(openat, int dirfd, const char *path, int omode) {
 }
 
 // mkdirat - create a directory
-define_syscall(mkdirat, int dirfd, const char *path, int mode) {
+define_syscall(mkdirat, int dirfd, const char *path, int mode)
+{
     Inode *ip;
     if (!user_strlen(path, 256))
         return -1;
@@ -325,7 +344,8 @@ define_syscall(mkdirat, int dirfd, const char *path, int mode) {
 }
 
 // mknodat - create a special or ordinary file
-define_syscall(mknodat, int dirfd, const char *path, mode_t mode, dev_t dev) {
+define_syscall(mknodat, int dirfd, const char *path, mode_t mode, dev_t dev)
+{
     Inode *ip;
     if (!user_strlen(path, 256))
         return -1;
@@ -350,14 +370,16 @@ define_syscall(mknodat, int dirfd, const char *path, mode_t mode, dev_t dev) {
 }
 
 // chdir - change current working directory
-define_syscall(chdir, const char *path) {
+define_syscall(chdir, const char *path)
+{
     // TODO
     // change the cwd (current working dictionary) of current process to 'path'
     // you may need to do some validations
 }
 
 // pipe2 - create a pipe
-define_syscall(pipe2, int pipefd[2], int flags) {
+define_syscall(pipe2, int pipefd[2], int flags)
+{
     // TODO
     // you can ignore the flags here,
     // or if you like, do some assertions to filter out unimplemented flags

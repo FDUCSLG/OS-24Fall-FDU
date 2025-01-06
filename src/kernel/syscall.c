@@ -9,6 +9,12 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverride-init"
 
+void init_syscall()
+{
+    for (u64 *p = (u64 *)&early_init; p < (u64 *)&rest_init; p++)
+        ((void (*)()) * p)();
+}
+
 void *syscall_table[NR_SYSCALL] = {
     [0 ... NR_SYSCALL - 1] = NULL,
     [SYS_myreport] = (void *)syscall_myreport,
