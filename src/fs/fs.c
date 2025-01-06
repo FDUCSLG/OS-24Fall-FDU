@@ -15,8 +15,3 @@ void init_filesystem() {
     init_inodes(sblock, &bcache);
     init_ftable();
 }
-
-define_rest_init(fs) {
-    init_filesystem();
-    printk("fs init ok\n");
-}
