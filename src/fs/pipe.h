@@ -1,21 +1,23 @@
-#ifndef _PIPE_H
-#define _PIPE_H
+#pragma once
+
 #include <common/spinlock.h>
 #include <common/defines.h>
 #include <fs/file.h>
 #include <common/sem.h>
-#define PIPESIZE 512
+
+#define PIPE_SIZE 512
+
 typedef struct pipe {
     SpinLock lock;
-    Semaphore wlock,rlock;
-    char data[PIPESIZE];
-    u32 nread;  // number of bytes read
-    u32 nwrite;  // number of bytes written
-    int readopen;  // read fd is still open
-    int writeopen;  // write fd is still open
+    Semaphore wlock, rlock;
+    char data[PIPE_SIZE];
+    u32 nread; // Number of bytes read
+    u32 nwrite; // Number of bytes written
+    int readopen; // Read fd is still open
+    int writeopen; // Write fd is still open
 } Pipe;
-int pipeAlloc(File** f0, File** f1);
-void pipeClose(Pipe* pi, int writable);
-int pipeWrite(Pipe* pi, u64 addr, int n);
-int pipeRead(Pipe* pi, u64 addr, int n);
-#endif
+
+int pipe_alloc(File **f0, File **f1);
+void pipe_close(Pipe *pi, int writable);
+int pipe_write(Pipe *pi, u64 addr, int n);
+int pipe_read(Pipe *pi, u64 addr, int n);
