@@ -7,9 +7,9 @@ struct console cons;
 
 void console_init()
 {
-    /* (Final) TODO Begin */
+    /* (Final) TODO BEGIN */
 
-    /* (Final) TODO End */
+    /* (Final) TODO END */
 }
 
 /**
@@ -20,9 +20,9 @@ void console_init()
  */
 isize console_write(Inode *ip, char *buf, isize n)
 {
-    /* (Final) TODO Begin */
+    /* (Final) TODO BEGIN */
 
-    /* (Final) TODO End */
+    /* (Final) TODO END */
 }
 
 /**
@@ -33,14 +33,14 @@ isize console_write(Inode *ip, char *buf, isize n)
  */
 isize console_read(Inode *ip, char *dst, isize n)
 {
-    /* (Final) TODO Begin */
+    /* (Final) TODO BEGIN */
 
-    /* (Final) TODO End */
+    /* (Final) TODO END */
 }
 
 void console_intr(char c)
 {
-    /* (Final) TODO Begin */
+    /* (Final) TODO BEGIN */
 
-    /* (Final) TODO End */
+    /* (Final) TODO END */
 }

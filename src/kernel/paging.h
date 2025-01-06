@@ -16,10 +16,12 @@ struct section {
     u64 begin;
     u64 end;
     ListNode stnode;
-    // These are for file-backed sections
-    struct file *fp; // pointer to file struct
-    u64 offset;      // the offset in file
-    u64 length;      // the length of mapped content in file
+
+    /* The following fields are for the file-backed sections. */
+
+    struct file *fp;
+    u64 offset; // Offset in file
+    u64 length; // Length of mapped content in file
 };
 
 int pgfault_handler(u64 iss);

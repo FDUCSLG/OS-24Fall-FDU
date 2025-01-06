@@ -31,11 +31,14 @@ struct iovec {
     usize iov_len; /* Number of bytes to transfer. */
 };
 
-// get the file object by fd
-// return null if the fd is invalid
+/** 
+ * Get the file object by fd. Return null if the fd is invalid.
+ */
 static struct file *fd2file(int fd)
 {
-    // TODO
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
 }
 
 /*
@@ -44,11 +47,12 @@ static struct file *fd2file(int fd)
  */
 int fdalloc(struct file *f)
 {
-    /* TODO: Lab10 Shell */
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
     return -1;
 }
 
-// ioctl - control device
 define_syscall(ioctl, int fd, u64 request)
 {
     // 0x5413 is TIOCGWINSZ (I/O Control to Get the WINdow SIZe, a magic request
@@ -58,20 +62,21 @@ define_syscall(ioctl, int fd, u64 request)
     return 0;
 }
 
-// mmap - map files or devices into memory
 define_syscall(mmap, void *addr, int length, int prot, int flags, int fd,
                int offset)
 {
-    // TODO
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
 }
 
-// munmap - unmap files or devices into memory
 define_syscall(munmap, void *addr, size_t length)
 {
-    // TODO
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
 }
 
-// dup - duplicate a file descriptor
 define_syscall(dup, int fd)
 {
     struct file *f = fd2file(fd);
@@ -84,7 +89,6 @@ define_syscall(dup, int fd)
     return fd;
 }
 
-// read - read from a file descriptor
 define_syscall(read, int fd, char *buffer, int size)
 {
     struct file *f = fd2file(fd);
@@ -93,7 +97,6 @@ define_syscall(read, int fd, char *buffer, int size)
     return file_read(f, buffer, size);
 }
 
-// write - write to a file descriptor
 define_syscall(write, int fd, char *buffer, int size)
 {
     struct file *f = fd2file(fd);
@@ -102,7 +105,6 @@ define_syscall(write, int fd, char *buffer, int size)
     return file_write(f, buffer, size);
 }
 
-// writev - write data into multiple buffers
 define_syscall(writev, int fd, struct iovec *iov, int iovcnt)
 {
     struct file *f = fd2file(fd);
@@ -118,14 +120,14 @@ define_syscall(writev, int fd, struct iovec *iov, int iovcnt)
     return tot;
 }
 
-// close - close a file descriptor
 define_syscall(close, int fd)
 {
-    /* TODO: LabFinal */
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
     return 0;
 }
 
-// fstat - get file status
 define_syscall(fstat, int fd, struct stat *st)
 {
     struct file *f = fd2file(fd);
@@ -134,8 +136,6 @@ define_syscall(fstat, int fd, struct stat *st)
     return file_stat(f, st);
 }
 
-// newfstatat - get file status (on some platform also called fstatat64, i.e. a
-// 64-bit version of fstatat)
 define_syscall(newfstatat, int dirfd, const char *path, struct stat *st,
                int flags)
 {
@@ -166,7 +166,6 @@ define_syscall(newfstatat, int dirfd, const char *path, struct stat *st,
     return 0;
 }
 
-// is the directory `dp` empty except for "." and ".." ?
 static int isdirempty(Inode *dp)
 {
     usize off;
@@ -181,7 +180,6 @@ static int isdirempty(Inode *dp)
     return 1;
 }
 
-// unlinkat - delete a name and possibly the file it refers to
 define_syscall(unlinkat, int fd, const char *path, int flag)
 {
     ASSERT(fd == AT_FDCWD && flag == 0);
@@ -262,11 +260,12 @@ bad:
 Inode *create(const char *path, short type, short major, short minor,
               OpContext *ctx)
 {
-    /* TODO: LabFinal */
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
     return 0;
 }
 
-// openat - open a file
 define_syscall(openat, int dirfd, const char *path, int omode)
 {
     int fd;
@@ -317,7 +316,6 @@ define_syscall(openat, int dirfd, const char *path, int omode)
     return fd;
 }
 
-// mkdirat - create a directory
 define_syscall(mkdirat, int dirfd, const char *path, int mode)
 {
     Inode *ip;
@@ -343,7 +341,6 @@ define_syscall(mkdirat, int dirfd, const char *path, int mode)
     return 0;
 }
 
-// mknodat - create a special or ordinary file
 define_syscall(mknodat, int dirfd, const char *path, mode_t mode, dev_t dev)
 {
     Inode *ip;
@@ -369,18 +366,22 @@ define_syscall(mknodat, int dirfd, const char *path, mode_t mode, dev_t dev)
     return 0;
 }
 
-// chdir - change current working directory
 define_syscall(chdir, const char *path)
 {
-    // TODO
-    // change the cwd (current working dictionary) of current process to 'path'
-    // you may need to do some validations
+    /**
+     * (Final) TODO BEGIN 
+     * 
+     * Change the cwd (current working dictionary) of current process to 'path'.
+     * You may need to do some validations.
+     */
+    
+    /* (Final) TODO END */
 }
 
-// pipe2 - create a pipe
 define_syscall(pipe2, int pipefd[2], int flags)
 {
-    // TODO
-    // you can ignore the flags here,
-    // or if you like, do some assertions to filter out unimplemented flags
+
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
 }

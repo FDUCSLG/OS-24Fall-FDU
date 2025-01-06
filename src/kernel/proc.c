@@ -90,12 +90,16 @@ int kill(int pid)
 void trap_return();
 int fork()
 {
-    // TODO:
-    // 1. create a new proc
-    // 2. copy the parent's memory
-    // 3. copy the parent's trapframe
-    // 4. set the parent of the new proc to the parent of the parent
-    // 5. set the state of the new proc to RUNNABLE
-    // 6. activate the new proc and return its pid
-    // NOTE: be careful of concurrency
+    /**
+     * (Final) TODO BEGIN
+     * 
+     * 1. Create a new child process.
+     * 2. Copy the parent's memory space.
+     * 3. Copy the parent's trapframe.
+     * 4. Set the parent of the new proc to the parent of the parent.
+     * 5. Set the state of the new proc to RUNNABLE.
+     * 6. Activate the new proc and return its pid.
+     */
+
+    /* (Final) TODO END */
 }

@@ -229,9 +229,6 @@ InodeTree inodes = {
     .remove = inode_remove,
 };
 
-
-/* LabFinal */
-
 /**
     @brief read the next path element from `path` into `name`.
     
@@ -292,7 +289,9 @@ static Inode* namex(const char* path,
                     bool nameiparent,
                     char* name,
                     OpContext* ctx) {
-    /* TODO: LabFinal */
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
     return 0;
 }
 

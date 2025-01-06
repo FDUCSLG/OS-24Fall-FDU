@@ -14,29 +14,53 @@
 
 
 void init_sections(ListNode *section_head) {
-    // TODO
+    /* (Final) TODO BEGIN */
+
+    /* (Final) TODO END */
 }
 
 void free_sections(struct pgdir *pd) {
-    // TODO
+    /* (Final) TODO BEGIN */
+    
+    /* (Final) TODO END */
 }
 
 u64 sbrk(i64 size) {
-    // TODO:
-    // Increase the heap size of current process by `size`
-    // If `size` is negative, decrease heap size
-    // `size` must be a multiple of PAGE_SIZE
-    // Return the previous heap_end
+    /**
+     * (Final) TODO BEGIN 
+     * 
+     * Increase the heap size of current process by `size`.
+     * If `size` is negative, decrease heap size. `size` must
+     * be a multiple of PAGE_SIZE.
+     * 
+     * Return the previous heap_end.
+     */
+
+    
+    /* (Final) TODO END */
 }
 
 int pgfault_handler(u64 iss) {
-    struct proc *p = thisproc();
+    Proc *p = thisproc();
     struct pgdir *pd = &p->pgdir;
-    u64 addr = arch_get_far(); // Attempting to access this address caused the
-                               // page fault
-    // TODO:
-    // 1. Find the section struct that contains the faulting address `addr`
-    // 2. Check section flags to determine page fault type
-    // 3. Handle the page fault accordingly
-    // 4. Return to user code or kill the process
+    u64 addr =
+            arch_get_far(); // Attempting to access this address caused the page fault
+
+    /** 
+     * (Final) TODO BEGIN
+     * 
+     * 1. Find the section struct which contains the faulting address `addr`.
+     * 2. Check section flags to determine page fault type.
+     * 3. Handle the page fault accordingly.
+     * 4. Return to user code or kill the process.
+     */
+
+    /* (Final) TODO END */
+}
+
+void copy_sections(ListNode *from_head, ListNode *to_head)
+{
+    /* (Final) TODO BEGIN */
+
+    /* (Final) TODO END */
 }

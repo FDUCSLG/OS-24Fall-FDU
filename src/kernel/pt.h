@@ -4,6 +4,8 @@
 
 struct pgdir {
     PTEntriesPtr pt;
+    SpinLock lock;
+    ListNode section_head;
 };
 
 void init_pgdir(struct pgdir *pgdir);

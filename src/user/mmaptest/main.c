@@ -21,18 +21,20 @@ void mmap_test();
 void fork_test();
 char buf[BSIZE];
 
-#define MAP_FAILED ((char*)-1)
+#define MAP_FAILED ((char *)-1)
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
     mmap_test();
     fork_test();
     printf("mmaptest: all tests succeeded\n");
     exit(0);
 }
 
-char* testname = "???";
+char *testname = "???";
 
-void err(char* why) {
+void err(char *why)
+{
     printf("mmaptest: %s failed: %s, pid=%d\n", testname, why, getpid());
     exit(1);
 }
@@ -40,7 +42,8 @@ void err(char* why) {
 //
 // check the content of the two mapped pages.
 //
-void _v1(char* p) {
+void _v1(char *p)
+{
     int i;
     for (i = 0; i < PGSIZE * 2; i++) {
         if (i < PGSIZE + (PGSIZE / 2)) {
@@ -61,7 +64,8 @@ void _v1(char* p) {
 // create a file to be mapped, containing
 // 1.5 pages of 'A' and half a page of zeros.
 //
-void makefile(const char* f) {
+void makefile(const char *f)
+{
     int i;
     int n = PGSIZE / BSIZE;
 
@@ -79,10 +83,11 @@ void makefile(const char* f) {
         err("close");
 }
 
-void mmap_test(void) {
+void mmap_test(void)
+{
     int fd;
     int i;
-    const char* const f = "mmap.dur";
+    const char *const f = "mmap.dur";
     printf("mmap_test starting\n");
     testname = "mmap_test";
 
@@ -111,7 +116,7 @@ void mmap_test(void) {
     // of the file to be mapped. the last argument is the starting
     // offset in the file.
     //
-    char* p = mmap(0, PGSIZE * 2, PROT_READ, MAP_PRIVATE, fd, 0);
+    char *p = mmap(0, PGSIZE * 2, PROT_READ, MAP_PRIVATE, fd, 0);
     if (p == MAP_FAILED)
         err("mmap (1)");
     _v1(p);
@@ -211,7 +216,7 @@ void mmap_test(void) {
         err("open mmap1");
     if (write(fd1, "12345", 5) != 5)
         err("write mmap1");
-    char* p1 = mmap(0, PGSIZE, PROT_READ, MAP_PRIVATE, fd1, 0);
+    char *p1 = mmap(0, PGSIZE, PROT_READ, MAP_PRIVATE, fd1, 0);
     if (p1 == MAP_FAILED)
         err("mmap mmap1");
     close(fd1);
@@ -222,7 +227,7 @@ void mmap_test(void) {
         err("open mmap2");
     if (write(fd2, "67890", 5) != 5)
         err("write mmap2");
-    char* p2 = mmap(0, PGSIZE, PROT_READ, MAP_PRIVATE, fd2, 0);
+    char *p2 = mmap(0, PGSIZE, PROT_READ, MAP_PRIVATE, fd2, 0);
     if (p2 == MAP_FAILED)
         err("mmap mmap2");
     close(fd2);
@@ -247,10 +252,11 @@ void mmap_test(void) {
 // mmap a file, then fork.
 // check that the child sees the mapped file.
 //
-void fork_test(void) {
+void fork_test(void)
+{
     int fd;
     int pid;
-    const char* const f = "mmap.dur";
+    const char *const f = "mmap.dur";
 
     printf("fork_test starting\n");
     testname = "fork_test";
@@ -260,10 +266,10 @@ void fork_test(void) {
     if ((fd = open(f, O_RDONLY)) == -1)
         err("open");
     unlink(f);
-    char* p1 = mmap(0, PGSIZE * 2, PROT_READ, MAP_SHARED, fd, 0);
+    char *p1 = mmap(0, PGSIZE * 2, PROT_READ, MAP_SHARED, fd, 0);
     if (p1 == MAP_FAILED)
         err("mmap (4)");
-    char* p2 = mmap(0, PGSIZE * 2, PROT_READ, MAP_SHARED, fd, 0);
+    char *p2 = mmap(0, PGSIZE * 2, PROT_READ, MAP_SHARED, fd, 0);
     if (p2 == MAP_FAILED)
         err("mmap (5)");
 
@@ -275,12 +281,12 @@ void fork_test(void) {
         err("fork");
     if (pid == 0) {
         _v1(p1);
-        munmap(p1, PGSIZE);  // just the first page
+        munmap(p1, PGSIZE); // just the first page
         printf("fork_test child OK\n");
         exit(0);
     }
 
-    int status = -1;  // This status code doesn't work due to our implementation
+    int status = -1; // This status code doesn't work due to our implementation
     wait(&status);
 
     // check that the parent's mappings are still there.
