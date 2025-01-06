@@ -27,25 +27,18 @@ get_property(kernel_elf GLOBAL PROPERTY kernel_elf_path)
 get_property(kernel_image GLOBAL PROPERTY kernel_image_path)
 get_property(sd_image GLOBAL PROPERTY sd_image_path)
 
-execute_process(
-    COMMAND sh -c "${aarch64_qemu} --version | head -1 | cut -f 4 -d ' '"
-    OUTPUT_VARIABLE qemu_version
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-if (qemu_version VERSION_LESS "6.2.0")
-    set(qemu_machine "raspi3")
-else()
-    set(qemu_machine "raspi3b")
-endif()
-message("QEMU version: " ${qemu_version} ". Use " ${qemu_machine} ".")
-
-
 set(qemu_flags
-    -machine ${qemu_machine}
+    -machine virt,gic-version=3
+    -cpu cortex-a72
+    -smp 4
+    -m 4096
     -nographic
-    -serial "null"
+    -monitor none
     -serial "mon:stdio"
-    -drive "file=${sd_image},if=sd,format=raw"
-    -kernel "${kernel_image}")
+    -global virtio-mmio.force-legacy=false
+    -drive file=${sd_image},if=none,format=raw,id=d0
+    -device virtio-blk-device,drive=d0,bus=virtio-mmio-bus.0
+    -kernel "${kernel_elf}")
 
 add_custom_target(qemu
     COMMAND ${aarch64_qemu} ${qemu_flags} -gdb tcp::1234

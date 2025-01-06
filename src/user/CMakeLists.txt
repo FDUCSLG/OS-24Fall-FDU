@@ -16,7 +16,7 @@ set(CMAKE_EXE_LINKER_FLAGS "")
 
 # Add targets here if needed
 # Note: you need to add the new executable name to boot/CMakeLists.txt too! Check that
-set(bin_list cat echo init ls sh mkdir usertests mkfs)
+set(bin_list cat echo init ls sh mkdir usertests mkfs mmaptest)
 
 add_custom_target(user_bin
     DEPENDS ${bin_list})

@@ -13,13 +13,12 @@ set(compiler_warnings "-Werror -Wall -Wextra")
 set(compiler_flags "${compiler_warnings} \
     -fno-pie -fno-pic -fno-stack-protector \
     -fno-zero-initialized-in-bss \
-    -g -Og -static \
-    -fno-builtin -nostdlib -nostdinc -ffreestanding -nostartfiles \
+    -Og -g -static -fno-builtin -nostdlib -nostdinc -ffreestanding -nostartfiles \
     -Wl,--whole-archive \
     -mgeneral-regs-only \
     -MMD -MP \
     -mlittle-endian -mcmodel=small -mno-outline-atomics \
-    -mcpu=cortex-a53 -mtune=cortex-a53")
+    -mcpu=cortex-a72+nofp -mtune=cortex-a72 -DUSE_ARMVIRT -Wno-error=unused-parameter")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${compiler_flags}")
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${compiler_flags}")

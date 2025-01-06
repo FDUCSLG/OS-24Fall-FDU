@@ -23,7 +23,8 @@ set(user_files "init"
 "ls"
 "mkfs"
 "mkdir"
-"usertests")
+"usertests"
+"mmaptest")
 
 foreach(file ${user_files})
     list(APPEND bin_list ../src/user/${file})
