@@ -11,6 +11,9 @@
 #include <driver/gicv3.h>
 #include <driver/timer.h>
 #include <driver/virtio.h>
+#include <fs/fs.h>
+#include <kernel/console.h>
+#include <kernel/syscall.h>
 
 static volatile bool boot_secondary_cpus = false;
 
@@ -41,12 +44,15 @@ void main()
         /* Initialize sched. */
         init_sched();
 
+        virtio_init();
+
         /* Initialize kernel proc. */
         init_kproc();
 
-        virtio_init();
-
         smp_init();
+
+        /* Initialize the console. */
+        console_init();
 
         arch_fence();
 
