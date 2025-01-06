@@ -21,4 +21,5 @@
 #define UART_ICR (UARTBASE + 0x44)
 
 void uart_init();
+char uart_get_char();
 void uart_put_char(char c);
