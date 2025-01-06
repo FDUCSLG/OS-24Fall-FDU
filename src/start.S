@@ -24,10 +24,18 @@
 #define MT_NORMAL_NC_FLAGS     0x44  /* Inner/Outer Non-cacheable */
 #define MAIR_VALUE             ((MT_DEVICE_nGnRnE_FLAGS << (8 * MT_DEVICE_nGnRnE)) | (MT_NORMAL_FLAGS << (8 * MT_NORMAL)) | (MT_NORMAL_NC_FLAGS << (8 * MT_NORMAL_NC)))
 
+/* CPACR_EL1, Architectural Feature Access Control Register. */
+#define CPACR_FP_EN    (3 << 20)
+#define CPACR_TRACE_EN (0 << 28)
+#define CPACR_VALUE    (CPACR_FP_EN | CPACR_TRACE_EN)
+
 .section ".text.boot"
 
 .global _start
 _start:
+  ldr x9, =CPACR_VALUE
+  msr cpacr_el1, x9
+
   /**
    * Set up the user and kernel page tables.
    * Higher and lower half map to same physical memory region.
