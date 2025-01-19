@@ -5,9 +5,9 @@
 #include <common/spinlock.h>
 #include <common/defines.h>
 #include <common/string.h>
-#include <common/debug.h>
 #include <common/sem.h>
-#define panic PANIC
+
+#define panic(fmt) PANIC()
 
 #include <kernel/mem.h>
 #include "socket.h"

@@ -6,10 +6,9 @@
 #include <common/string.h>
 #include <common/defines.h>
 #include <kernel/mem.h>
-#include <common/debug.h>
 #include <aarch64/mmu.h>
 
-#define panic(fmt) PANIC(fmt)
+#define panic(fmt) PANIC()
 
 #define TX_RING_SIZE 16
 static struct tx_desc tx_ring[TX_RING_SIZE] __attribute__((aligned(16)));
@@ -22,7 +21,8 @@ static struct mbuf *rx_mbufs[RX_RING_SIZE];
 // remember where the e1000's registers live.
 static volatile uint32 *regs;
 
-// little endian does not work.
+// If host is big endian, then should convert byte order.
+// Our kernel is little-endian.
 // #define CONVERT
 
 /** Write to u16 in little edian. */
