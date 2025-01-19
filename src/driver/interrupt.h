@@ -5,6 +5,7 @@
 typedef enum {
     TIMER_IRQ = 27,
     UART_IRQ = 33,
+    PCIE_IRQ = 36,
     VIRTIO_BLK_IRQ = 48
 } InterruptType;
 

@@ -261,6 +261,7 @@ void gicv3_init()
 
     gic_setup_spi(UART_IRQ, 0);
     gic_setup_spi(VIRTIO_BLK_IRQ, 0);
+    gic_setup_spi(PCIE_IRQ, 0);
 }
 
 bool gic_enabled()

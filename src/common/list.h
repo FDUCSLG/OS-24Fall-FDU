@@ -8,6 +8,9 @@ typedef struct ListNode {
     struct ListNode *prev, *next;
 } ListNode;
 
+#define ListEntr(NODE, STRUCT, MEMBER) \
+    ((STRUCT *)((u8 *)&(NODE)->next - offset_of(STRUCT, MEMBER.next)))
+
 // initialize a sigle node circular list.
 void init_list_node(ListNode *node);
 
