@@ -27,8 +27,9 @@ get_property(kernel_elf GLOBAL PROPERTY kernel_elf_path)
 get_property(kernel_image GLOBAL PROPERTY kernel_image_path)
 get_property(sd_image GLOBAL PROPERTY sd_image_path)
 
+# change: added net device.
 set(qemu_flags
-    -machine virt,gic-version=3
+    -machine virt,gic-version=3,highmem-ecam=off
     -cpu cortex-a72
     -smp 4
     -m 4096
@@ -38,6 +39,8 @@ set(qemu_flags
     -global virtio-mmio.force-legacy=false
     -drive file=${sd_image},if=none,format=raw,id=d0
     -device virtio-blk-device,drive=d0,bus=virtio-mmio-bus.0
+    -netdev user,id=net0,hostfwd=udp::25999-:2000 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
+    -device e1000,netdev=net0,bus=pcie.0
     -kernel "${kernel_elf}")
 
 add_custom_target(qemu
